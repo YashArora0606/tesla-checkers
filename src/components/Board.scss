@@ -1,0 +1,18 @@
+.game-board {
+
+    margin: 2rem;
+    border: 2px solid #474747;
+    border-collapse: collapse;
+
+    td {
+        height: 4rem;
+        width: 4rem;
+    }
+
+    .light-square {
+        background-color: #f2f2f2;
+    }
+    .dark-square {
+        background-color: #474747;
+    }
+}
