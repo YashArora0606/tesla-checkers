@@ -12,8 +12,17 @@ const Board = () => {
 
 	const [board, setBoard] = useState<number[][]>([[]]);
 
-	// eslint-disable-next-line
-	useEffect(() => {
+	const setBoardValue = (i: number, j: number, value: BoardValue) => {
+		setBoard((board) => {
+			const newBoard = board.map((row) => {
+				return [...row];
+			});
+			newBoard[i][j] = value;
+			return newBoard;
+		});
+	};
+
+	const initializeBoard = () => {
 		var arr = new Array(BOARD_SIZE).fill(BoardValue.Empty).map(() => {
 			return new Array(BOARD_SIZE).fill(BoardValue.Empty);
 		});
@@ -23,7 +32,13 @@ const Board = () => {
 				(i + j) % 2 !== 0 && i >= 5 && (arr[i][j] = BoardValue.Red);
 			});
 		});
-		setBoard(arr);
+		return arr;
+	};
+
+	// eslint-disable-next-line
+	useEffect(() => {
+		const initialBoard = initializeBoard();
+		setBoard(initialBoard);
 	}, []);
 
 	return (
