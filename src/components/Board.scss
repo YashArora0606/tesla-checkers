@@ -1,35 +1,5 @@
 .game-board {
-  margin: 2rem;
-  border: 2px solid #474747;
-  border-collapse: collapse;
-
-  td {
-    height: 4rem;
-    width: 4rem;
-  }
-
-  .light-square {
-    background-color: #f2f2f2;
-  }
-  .dark-square {
-    background-color: #474747;
-  }
-
-  button {
-    padding: 0.5rem;
-    margin: 0 auto;
-    display: block;
-    outline: none;
-    border: none;
-    border-radius: 50%;
-    padding: 1.7rem;
-  }
-
-  .red-piece {
-    background-color: #c9426f;
-  }
-
-  .blue-piece {
-    background-color: #42a2c9;
-  }
+	margin: 2rem;
+	border: 2px solid #474747;
+	border-collapse: collapse;
 }
