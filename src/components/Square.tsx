@@ -10,10 +10,12 @@ export enum SquareType {
 type SquareProps = {
 	squareType: SquareType;
 	pieceType: PieceType;
-	id: string;
+	x: number;
+	y: number;
+	attemptMove: (x: number, y: number, newX: number, newY: number) => boolean;
 };
 
-const Square = ({ squareType, pieceType, id }: SquareProps) => {
+const Square = ({ x, y, squareType, pieceType, attemptMove }: SquareProps) => {
 	const onDragOver = (event: any) => {
 		event.preventDefault();
 	};
@@ -22,25 +24,37 @@ const Square = ({ squareType, pieceType, id }: SquareProps) => {
 		const id = event.dataTransfer.getData("text");
 		const draggableElement = document.getElementById(id);
 		const dropzone = event.target;
-		if (dropzone.localName === "td" && dropzone.childElementCount === 0) {
-			console.log(dropzone.id);
-			dropzone.appendChild(draggableElement);
+
+		const dropzoneIsDroppable =
+			dropzone.className.includes("square") &&
+			dropzone.childElementCount === 0 &&
+			draggableElement !== null;
+
+		if (dropzoneIsDroppable) {
+			// const moveIsValid = attemptMove(x, y, xDestination, yDestination);
+
+			const moveIsValid = true;
+			moveIsValid && dropzone.appendChild(draggableElement);
 		}
+
 		event.dataTransfer.clearData();
 	};
 
 	return (
-		<td
-			id={`sq-${id}`}
+		<div
+			id={`sq-${x}-${y}`}
 			className={
-				squareType === SquareType.Dark ? "dark-square" : "light-square"
+				"square " +
+				(squareType === SquareType.Dark
+					? "dark-square"
+					: "light-square")
 			}
 			onDragOver={onDragOver}
 			onDrop={onDrop}
 			draggable={false}
 		>
-			<Piece pieceType={pieceType} id={id} />
-		</td>
+			<Piece pieceType={pieceType} id={`pc-${x}-${y}`} />
+		</div>
 	);
 };
 

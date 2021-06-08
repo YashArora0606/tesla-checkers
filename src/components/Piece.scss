@@ -1,21 +1,28 @@
-button {
-	margin: 0 auto;
+.piece {
 	display: block;
 	outline: none;
 	border: none;
 	border-radius: 50%;
-	padding: 1.7rem;
+	margin-left: auto;
+	margin-right: auto;
+	width: 2.7rem;
+	height: 2.7rem;
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
 }
 
 .red-piece {
 	background-color: #c9426f;
+	border: 0.3rem solid #e88eac;
 }
 
 .red-piece:hover {
 	cursor: pointer;
-	padding: 1.75rem;
+	border-color: #ffb8cf;
 }
 
 .blue-piece {
 	background-color: #42a2c9;
+	border: 0.3rem solid #7cd4f7;
 }

@@ -15,13 +15,17 @@ type PieceProps = {
 const Piece = ({ pieceType, id }: PieceProps) => {
 	const onDragStart = (event: any) => {
 		event.dataTransfer.setData("text/plain", event.target.id);
-		// event.currentTarget.style.backgroundColor = "yellow";
+		pieceType !== PieceType.Red && event.preventDefault();
 	};
 
 	return pieceType !== PieceType.Empty ? (
-		<button
-			id={`pc-${id}`}
-			className={pieceType === PieceType.Red ? "red-piece" : "blue-piece"}
+		<span
+			id={id}
+			className={
+				pieceType === PieceType.Red
+					? "piece red-piece"
+					: "piece blue-piece"
+			}
 			draggable={pieceType === PieceType.Red}
 			onDragStart={onDragStart}
 		/>

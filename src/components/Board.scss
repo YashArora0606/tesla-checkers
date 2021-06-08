@@ -1,5 +1,11 @@
 .game-board {
 	margin: 2rem;
-	border: 2px solid #474747;
-	border-collapse: collapse;
+	outline: 0.2rem solid #474747;
+	display: inline-block;
+
+	.board-row {
+		vertical-align: middle;
+		height: 4rem;
+		white-space: nowrap;
+	}
 }

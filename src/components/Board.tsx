@@ -36,32 +36,41 @@ const Board = () => {
 	// 	});
 	// };
 
+	const attemptMove = (x: number, y: number, newX: number, newY: number) => {
+		console.log(x, y, newX, newY);
+		board.forEach((item) => {
+			console.log(item);
+		});
+		console.log("*************************");
+		return false;
+	};
+
 	return (
 		<div>
-			<table className="game-board">
-				<tbody>
-					{board.map((row, i) => {
-						return (
-							<tr key={i}>
-								{row.map((item, j) => {
-									return (
-										<Square
-											id={`${i}-${j}`}
-											key={j}
-											squareType={
-												(i + j) % 2 !== 0
-													? SquareType.Dark
-													: SquareType.Light
-											}
-											pieceType={item}
-										/>
-									);
-								})}
-							</tr>
-						);
-					})}
-				</tbody>
-			</table>
+			<div className="game-board" id="board">
+				{board.map((row, i) => {
+					return (
+						<div key={i} className="board-row">
+							{row.map((item, j) => {
+								return (
+									<Square
+										attemptMove={attemptMove}
+										x={i}
+										y={j}
+										key={j}
+										squareType={
+											(i + j) % 2 !== 0
+												? SquareType.Dark
+												: SquareType.Light
+										}
+										pieceType={item}
+									/>
+								);
+							})}
+						</div>
+					);
+				})}
+			</div>
 		</div>
 	);
 };
