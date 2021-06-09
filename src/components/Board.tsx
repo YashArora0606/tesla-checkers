@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import "./Board.scss";
 import { PieceType } from "./Piece";
 import Square, { SquareType } from "./Square";
+
+export const BoardContext = createContext<{
+	board: number[][];
+	setBoard: any;
+}>({
+	board: [[]],
+	setBoard: () => {},
+});
 
 const Board = () => {
 	const BOARD_SIZE = 8;
@@ -46,32 +54,34 @@ const Board = () => {
 	};
 
 	return (
-		<div>
-			<div className="game-board" id="board">
-				{board.map((row, i) => {
-					return (
-						<div key={i} className="board-row">
-							{row.map((item, j) => {
-								return (
-									<Square
-										attemptMove={attemptMove}
-										x={i}
-										y={j}
-										key={j}
-										squareType={
-											(i + j) % 2 !== 0
-												? SquareType.Dark
-												: SquareType.Light
-										}
-										pieceType={item}
-									/>
-								);
-							})}
-						</div>
-					);
-				})}
+		<BoardContext.Provider value={{ board: board, setBoard: setBoard }}>
+			<div>
+				<div className="game-board" id="board">
+					{board.map((row, i) => {
+						return (
+							<div key={i} className="board-row">
+								{row.map((item, j) => {
+									return (
+										<Square
+											attemptMove={attemptMove}
+											x={i}
+											y={j}
+											key={j}
+											squareType={
+												(i + j) % 2 !== 0
+													? SquareType.Dark
+													: SquareType.Light
+											}
+											pieceType={item}
+										/>
+									);
+								})}
+							</div>
+						);
+					})}
+				</div>
 			</div>
-		</div>
+		</BoardContext.Provider>
 	);
 };
 

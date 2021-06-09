@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useContext } from "react";
+import { BoardContext } from "./Board";
 import "./Piece.scss";
 
 export enum PieceType {
@@ -13,9 +14,23 @@ type PieceProps = {
 };
 
 const Piece = ({ pieceType, id }: PieceProps) => {
+	const { board, setBoard } = useContext(BoardContext);
+
 	const onDragStart = (event: any) => {
 		event.dataTransfer.setData("text/plain", event.target.id);
 		pieceType !== PieceType.Red && event.preventDefault();
+		highlightValidMoves();
+	};
+
+	const highlightValidMoves = () => {
+		console.log("CALLING_______________________");
+		const newBoard = board.map((list) => {
+			const row = list.map((item) => {
+				return 1;
+			});
+			return row;
+		});
+		setBoard(newBoard);
 	};
 
 	return pieceType !== PieceType.Empty ? (
