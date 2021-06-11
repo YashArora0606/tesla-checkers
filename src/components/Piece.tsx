@@ -30,7 +30,7 @@ const Piece = ({
 					? "piece red-piece"
 					: "piece blue-piece"
 			}
-			draggable={true}
+			draggable={pieceType === PieceType.Red}
 			onDragStart={onDragStart}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}

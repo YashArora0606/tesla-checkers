@@ -1,11 +1,11 @@
 import React from "react";
 import "./App.scss";
-import Board from "./Board";
+import Game from "./Game";
 
 function App() {
 	return (
 		<div className="App">
-			<Board></Board>
+			<Game></Game>
 		</div>
 	);
 }
