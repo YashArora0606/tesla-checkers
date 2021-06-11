@@ -6,10 +6,10 @@ import Square from "./Square";
 
 const Board = () => {
 	const BOARD_SIZE = 8;
+	const EMPTY = new Set<string>();
 	const [board, setBoard] = useState<number[][]>([[]]);
-	const [highlightedSquares, setHighlightedSquares] = useState<Set<string>>(
-		new Set<string>()
-	);
+	const [highlightedSquares, setHighlightedSquares] =
+		useState<Set<string>>(EMPTY);
 
 	useEffect(() => {
 		const initialBoard = initializeBoard();
@@ -39,14 +39,19 @@ const Board = () => {
 			dropzone.childElementCount === 0 &&
 			draggableElement !== null;
 
-		const x1 = draggableElement!.parentElement!.dataset.x;
-		const y1 = draggableElement!.parentElement!.dataset.y;
 		const x2 = dropzone.dataset.x;
 		const y2 = dropzone.dataset.y;
 
 		const isMoveValid = highlightedSquares.has(`${x2}-${y2}`);
 
-		if (dropzoneIsDroppable && isMoveValid) {
+		if (
+			dropzoneIsDroppable &&
+			isMoveValid &&
+			draggableElement &&
+			draggableElement.parentElement
+		) {
+			const x1 = draggableElement!.parentElement!.dataset.x;
+			const y1 = draggableElement!.parentElement!.dataset.y;
 			setBoard((board) => {
 				return board.map((row, i) => {
 					return row.map((item, j) => {
@@ -59,6 +64,7 @@ const Board = () => {
 					});
 				});
 			});
+			setHighlightedSquares(EMPTY);
 		}
 
 		event.dataTransfer.clearData();
@@ -80,7 +86,7 @@ const Board = () => {
 		setHighlightedSquares(validSquares);
 	};
 	const onMouseLeavePiece = (event: any) => {
-		setHighlightedSquares(new Set());
+		setHighlightedSquares(EMPTY);
 	};
 
 	return (
