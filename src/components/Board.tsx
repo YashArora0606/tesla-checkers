@@ -18,16 +18,28 @@ const Board = () => {
 		var arr = new Array(BOARD_SIZE).fill(PieceType.Empty).map(() => {
 			return new Array(BOARD_SIZE).fill(PieceType.Empty);
 		});
-		arr.forEach((row, i) => {
-			row.forEach((square, j) => {
-				(i + j) % 2 !== 0 && i <= 2 && (arr[i][j] = PieceType.Blue);
-				(i + j) % 2 !== 0 && i >= 5 && (arr[i][j] = PieceType.Red);
-			});
-		});
-		// arr[4][5] = PieceType.Blue;
-		// arr[5][4] = PieceType.Red;
+		// arr.forEach((row, i) => {
+		// 	row.forEach((square, j) => {
+		// 		(i + j) % 2 !== 0 && i <= 2 && (arr[i][j] = PieceType.Blue);
+		// 		(i + j) % 2 !== 0 && i >= 5 && (arr[i][j] = PieceType.Red);
+		// 	});
+		// });
+		arr[0][5] = PieceType.Blue;
+		arr[5][4] = PieceType.Red;
 
 		return arr;
+	};
+
+	const makeEnemyMove = () => {
+		board.forEach((row, i) => {
+			row.forEach((item, j) => {
+				const moves = getValidSquares(board, i, j);
+				if (item === PieceType.Blue && moves.length > 0) {
+					makeMove(moves[0]);
+					return;
+				}
+			});
+		});
 	};
 
 	const onDrop = (event: any) => {
@@ -55,32 +67,35 @@ const Board = () => {
 			draggableElement &&
 			draggableElement.parentElement
 		) {
-			console.log(moveBeingMade);
-
-			const start = moveBeingMade.start;
-			const end = moveBeingMade.end;
-			const cap = moveBeingMade.captured;
-
-			const initialValue = board[start.x][start.y];
-
-			setBoard((board) => {
-				return board.map((row, i) => {
-					return row.map((item, j) => {
-						if (i === start.x && j === start.y) {
-							return 0;
-						} else if (i === end.x && j === end.y) {
-							return initialValue;
-						} else if (cap && i === cap.x && j === cap.y) {
-							return 0;
-						}
-						return item;
-					});
-				});
-			});
+			makeMove(moveBeingMade);
+			setTimeout(() => {
+				makeEnemyMove();
+			}, 1500);
 			setPossibleMoves([]);
 		}
 
 		event.dataTransfer.clearData();
+	};
+	const makeMove = (moveBeingMade: Move) => {
+		const start = moveBeingMade.start;
+		const end = moveBeingMade.end;
+		const cap = moveBeingMade.captured;
+		const initialValue = board[start.x][start.y];
+
+		setBoard((board) => {
+			return board.map((row, i) => {
+				return row.map((item, j) => {
+					if (i === start.x && j === start.y) {
+						return 0;
+					} else if (i === end.x && j === end.y) {
+						return initialValue;
+					} else if (cap && i === cap.x && j === cap.y) {
+						return 0;
+					}
+					return item;
+				});
+			});
+		});
 	};
 	const onDragOver = (event: any) => {
 		event.preventDefault();
@@ -103,43 +118,38 @@ const Board = () => {
 	};
 
 	return (
-		<div>
-			<div className="game-board" id="board">
-				{board.map((row, i) => {
-					return (
-						<div key={i} className="board-row">
-							{row.map((item, j) => {
-								return (
-									<Square
-										x={i}
-										y={j}
-										key={j}
-										id={`sq-${i}-${j}`}
-										onDragOver={onDragOver}
-										onDrop={onDrop}
-										highlight={possibleMoves.some(
-											(move) => {
-												return (
-													move.end.x === i &&
-													move.end.y === j
-												);
-											}
-										)}
-									>
-										<Piece
-											pieceType={item}
-											id={`pc-${i}-${j}`}
-											onDragStart={onDragStart}
-											onMouseEnter={onMouseEnterPiece}
-											onMouseLeave={onMouseLeavePiece}
-										/>
-									</Square>
-								);
-							})}
-						</div>
-					);
-				})}
-			</div>
+		<div className="game-board" id="board">
+			{board.map((row, i) => {
+				return (
+					<div key={i} className="board-row">
+						{row.map((item, j) => {
+							return (
+								<Square
+									x={i}
+									y={j}
+									key={j}
+									id={`sq-${i}-${j}`}
+									onDragOver={onDragOver}
+									onDrop={onDrop}
+									highlight={possibleMoves.some((move) => {
+										return (
+											move.end.x === i && move.end.y === j
+										);
+									})}
+								>
+									<Piece
+										pieceType={item}
+										id={`pc-${i}-${j}`}
+										onDragStart={onDragStart}
+										onMouseEnter={onMouseEnterPiece}
+										onMouseLeave={onMouseLeavePiece}
+									/>
+								</Square>
+							);
+						})}
+					</div>
+				);
+			})}
 		</div>
 	);
 };
