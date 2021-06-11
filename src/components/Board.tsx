@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { getValidSquares } from "../utils/gameLogic";
+import { getValidSquares, Move } from "../utils/gameLogic";
 import "./Board.scss";
 import Piece, { PieceType } from "./Piece";
 import Square from "./Square";
 
 const Board = () => {
 	const BOARD_SIZE = 8;
-	const EMPTY = new Set<string>();
 	const [board, setBoard] = useState<number[][]>([[]]);
-	const [highlightedSquares, setHighlightedSquares] =
-		useState<Set<string>>(EMPTY);
+	const [possibleMoves, setPossibleMoves] = useState<Move[]>([]);
 
 	useEffect(() => {
 		const initialBoard = initializeBoard();
@@ -26,6 +24,9 @@ const Board = () => {
 				(i + j) % 2 !== 0 && i >= 5 && (arr[i][j] = PieceType.Red);
 			});
 		});
+		// arr[4][5] = PieceType.Blue;
+		// arr[5][4] = PieceType.Red;
+
 		return arr;
 	};
 
@@ -39,32 +40,44 @@ const Board = () => {
 			dropzone.childElementCount === 0 &&
 			draggableElement !== null;
 
-		const x2 = dropzone.dataset.x;
-		const y2 = dropzone.dataset.y;
+		const endX = dropzone.dataset.x;
+		const endY = dropzone.dataset.y;
 
-		const isMoveValid = highlightedSquares.has(`${x2}-${y2}`);
+		const moveBeingMade = possibleMoves.find((move) => {
+			return (
+				move.end.x.toString() === endX && move.end.y.toString() === endY
+			);
+		});
 
 		if (
 			dropzoneIsDroppable &&
-			isMoveValid &&
+			moveBeingMade !== undefined &&
 			draggableElement &&
 			draggableElement.parentElement
 		) {
-			const x1 = draggableElement!.parentElement!.dataset.x;
-			const y1 = draggableElement!.parentElement!.dataset.y;
+			console.log(moveBeingMade);
+
+			const start = moveBeingMade.start;
+			const end = moveBeingMade.end;
+			const cap = moveBeingMade.captured;
+
+			const initialValue = board[start.x][start.y];
+
 			setBoard((board) => {
 				return board.map((row, i) => {
 					return row.map((item, j) => {
-						if (i.toString() === x1 && j.toString() === y1) {
+						if (i === start.x && j === start.y) {
 							return 0;
-						} else if (i.toString() === x2 && j.toString() === y2) {
-							return 1;
+						} else if (i === end.x && j === end.y) {
+							return initialValue;
+						} else if (cap && i === cap.x && j === cap.y) {
+							return 0;
 						}
 						return item;
 					});
 				});
 			});
-			setHighlightedSquares(EMPTY);
+			setPossibleMoves([]);
 		}
 
 		event.dataTransfer.clearData();
@@ -83,10 +96,10 @@ const Board = () => {
 			parseFloat(x),
 			parseFloat(y)
 		);
-		setHighlightedSquares(validSquares);
+		setPossibleMoves(validSquares);
 	};
 	const onMouseLeavePiece = (event: any) => {
-		setHighlightedSquares(EMPTY);
+		setPossibleMoves([]);
 	};
 
 	return (
@@ -104,8 +117,13 @@ const Board = () => {
 										id={`sq-${i}-${j}`}
 										onDragOver={onDragOver}
 										onDrop={onDrop}
-										highlight={highlightedSquares.has(
-											`${i}-${j}`
+										highlight={possibleMoves.some(
+											(move) => {
+												return (
+													move.end.x === i &&
+													move.end.y === j
+												);
+											}
 										)}
 									>
 										<Piece
