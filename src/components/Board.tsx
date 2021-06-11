@@ -47,8 +47,6 @@ const Board = () => {
 		const isMoveValid = highlightedSquares.has(`${x2}-${y2}`);
 
 		if (dropzoneIsDroppable && isMoveValid) {
-			dropzone.appendChild(draggableElement);
-
 			setBoard((board) => {
 				return board.map((row, i) => {
 					return row.map((item, j) => {
