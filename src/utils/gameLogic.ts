@@ -11,7 +11,7 @@ export const oppositePiece = (piece: PieceType) => {
 		return PieceType.Red;
 	}
 	return piece;
-}
+};
 
 export type Move = {
 	start: { x: number; y: number };
@@ -34,21 +34,21 @@ export const getAllMoves = (board: number[][], piece: PieceType) => {
 		return move.captured !== undefined;
 	});
 	return captures.length > 0 ? captures : allMoves;
-}
+};
 
 export const evaluateWinner = (board: number[][], lastPlayer: PieceType) => {
 	var winner = PieceType.Empty;
 	if (board.length === 1 && board[0].length === 0) {
 		winner = PieceType.Empty;
-	} else if (!board.some(row => row.includes(PieceType.Red))) {
+	} else if (!board.some((row) => row.includes(PieceType.Red))) {
 		winner = PieceType.Blue;
-	} else if (!board.some(row => row.includes(PieceType.Blue))) {
+	} else if (!board.some((row) => row.includes(PieceType.Blue))) {
 		winner = PieceType.Red;
 	} else if (getAllMoves(board, oppositePiece(lastPlayer)).length === 0) {
 		winner = lastPlayer;
 	}
 	return winner;
-}
+};
 
 export const getValidSquares = (board: number[][], x: number, y: number) => {
 	const piece = board[x][y];
@@ -56,15 +56,17 @@ export const getValidSquares = (board: number[][], x: number, y: number) => {
 
 	const movesForPiece = getValidMovesByPosition(board, x, y);
 
-	if (allMoves.some(move => move.captured !== undefined)) {
-		return movesForPiece.filter(move => move.captured !== undefined);
+	if (allMoves.some((move) => move.captured !== undefined)) {
+		return movesForPiece.filter((move) => move.captured !== undefined);
 	}
 	return movesForPiece;
-}
+};
 
-
-export const getValidMovesByPosition = (board: number[][], x: number, y: number) => {
-
+export const getValidMovesByPosition = (
+	board: number[][],
+	x: number,
+	y: number
+) => {
 	var validMoves: Move[] = [];
 
 	const piece = board[x][y];
@@ -90,7 +92,7 @@ export const getValidMovesByPosition = (board: number[][], x: number, y: number)
 				end: { x: x - 2 * offset, y: y - 2 },
 				captured: { x: x - offset, y: y - 1 },
 			});
-		}	
+		}
 	}
 	if (inBounds(board, x - offset, y + 1)) {
 		if (board[x - offset][y + 1] === PieceType.Empty) {

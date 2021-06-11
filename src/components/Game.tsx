@@ -6,6 +6,7 @@ import {
 	getValidSquares,
 	Move,
 } from "../utils/gameLogic";
+import Analytics from "./Analytics";
 import Board from "./Board";
 import "./Game.scss";
 import { PieceType } from "./Piece";
@@ -17,10 +18,13 @@ const Game = () => {
 	const [winner, setWinner] = useState<PieceType>(PieceType.Empty);
 	const [possibleMoves, setPossibleMoves] = useState<Move[]>([]);
 	const [doubleJumpMoves, setDoubleJumpMoves] = useState<Move[]>([]);
+	const [startTime, setStartTime] = useState<number>(0);
+	const AI_MOVE_TIME = 1000;
 
 	useEffect(() => {
 		const initialBoard = initializeBoard();
 		setBoard(initialBoard);
+		setStartTime(performance.now());
 	}, []);
 
 	useEffect(() => {
@@ -37,7 +41,7 @@ const Game = () => {
 		lastPlayer === PieceType.Red &&
 			setTimeout(() => {
 				makeEnemyMove();
-			}, 500);
+			}, AI_MOVE_TIME);
 		// eslint-disable-next-line
 	}, [lastPlayer, doubleJumpMoves]);
 
@@ -50,17 +54,17 @@ const Game = () => {
 		var arr = new Array(BOARD_SIZE).fill(PieceType.Empty).map(() => {
 			return new Array(BOARD_SIZE).fill(PieceType.Empty);
 		});
-		// arr.forEach((row, i) => {
-		// 	row.forEach((square, j) => {
-		// 		(i + j) % 2 !== 0 && i <= 2 && (arr[i][j] = PieceType.Blue);
-		// 		(i + j) % 2 !== 0 && i >= 5 && (arr[i][j] = PieceType.Red);
-		// 	});
-		// });
-		arr[1][4] = PieceType.Blue;
+		arr.forEach((row, i) => {
+			row.forEach((square, j) => {
+				(i + j) % 2 !== 0 && i <= 2 && (arr[i][j] = PieceType.Blue);
+				(i + j) % 2 !== 0 && i >= 5 && (arr[i][j] = PieceType.Red);
+			});
+		});
+		// arr[1][4] = PieceType.Blue;
 
-		arr[3][4] = PieceType.Red;
-		arr[4][5] = PieceType.Red;
-		arr[6][5] = PieceType.Red;
+		// arr[3][4] = PieceType.Red;
+		// arr[4][5] = PieceType.Red;
+		// arr[6][5] = PieceType.Red;
 
 		return arr;
 	};
@@ -143,8 +147,14 @@ const Game = () => {
 		event.dataTransfer.setData("text/plain", event.target.id);
 	};
 	const onMouseEnterPiece = (event: any) => {
-		const x = parseFloat(event.target.parentElement.dataset.x);
-		const y = parseFloat(event.target.parentElement.dataset.y);
+		var parent = event.target.parentElement;
+		if (parent.tagName.toLowerCase() === "span") {
+			parent = parent.parentElement;
+		}
+
+		const x = parseFloat(parent.dataset.x);
+		const y = parseFloat(parent.dataset.y);
+
 		const validSquares = getValidSquares(board, x, y);
 
 		const onRedPiece =
@@ -166,15 +176,23 @@ const Game = () => {
 	};
 
 	return (
-		<Board
-			arr={board}
-			onDragOver={onDragOver}
-			onDrop={onDrop}
-			onDragStart={onDragStart}
-			onMouseEnterPiece={onMouseEnterPiece}
-			onMouseLeavePiece={onMouseLeavePiece}
-			possibleMoves={possibleMoves}
-		/>
+		<div className="game">
+			<Board
+				arr={board}
+				onDragOver={onDragOver}
+				onDrop={onDrop}
+				onDragStart={onDragStart}
+				onMouseEnterPiece={onMouseEnterPiece}
+				onMouseLeavePiece={onMouseLeavePiece}
+				possibleMoves={possibleMoves}
+			/>
+			<Analytics
+				startTime={startTime}
+				movesMade={1}
+				winner={winner}
+				lastPlayer={lastPlayer}
+			/>
+		</div>
 	);
 };
 

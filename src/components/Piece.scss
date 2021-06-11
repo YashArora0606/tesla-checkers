@@ -10,6 +10,15 @@
 	position: relative;
 	top: 50%;
 	transform: translateY(-50%);
+	text-align: center;
+
+	.emoji {
+		display: inline-block;
+		position: absolute;
+		font-size: 2rem;
+		transform: translateX(-50%) translateY(-2%);
+		filter: brightness();
+	}
 
 	// Fix dragging thumbnail issues on safari
 	@media not all and (min-resolution: 0.001dpcm) {
@@ -24,6 +33,9 @@
 .red-piece {
 	background-color: #c9426f;
 	border: 0.3rem solid #e88eac;
+	.emoji {
+		filter: hue-rotate(300deg);
+	}
 }
 
 .red-piece:hover {
@@ -34,4 +46,7 @@
 .blue-piece {
 	background-color: #42a2c9;
 	border: 0.3rem solid #7cd4f7;
+	.emoji {
+		filter: hue-rotate(180deg);
+	}
 }

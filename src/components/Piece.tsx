@@ -34,7 +34,19 @@ const Piece = ({
 			onDragStart={onDragStart}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
-		/>
+		>
+			{/* <span
+				className="emoji"
+				draggable={false}
+				tabIndex={-1}
+				onDragStart={(e: any) => {
+					e.preventDefault();
+					e.stopPropagation();
+				}}
+			>
+				{pieceType === PieceType.Red ? "⚡" : "⛽"}
+			</span> */}
+		</span>
 	) : null;
 };
 
