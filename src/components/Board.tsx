@@ -1,21 +1,16 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { getValidSquares } from "../utils/gameLogic";
 import "./Board.scss";
-import { PieceType } from "./Piece";
-import Square, { SquareType } from "./Square";
-
-export const BoardContext = createContext<{
-	board: number[][];
-	setBoard: any;
-}>({
-	board: [[]],
-	setBoard: () => {},
-});
+import Piece, { PieceType } from "./Piece";
+import Square from "./Square";
 
 const Board = () => {
 	const BOARD_SIZE = 8;
 	const [board, setBoard] = useState<number[][]>([[]]);
+	const [highlightedSquares, setHighlightedSquares] = useState<Set<string>>(
+		new Set<string>()
+	);
 
-	// eslint-disable-next-line
 	useEffect(() => {
 		const initialBoard = initializeBoard();
 		setBoard(initialBoard);
@@ -34,54 +29,96 @@ const Board = () => {
 		return arr;
 	};
 
-	// const setBoardValue = (i: number, j: number, value: PieceType) => {
-	// 	setBoard((board) => {
-	// 		const newBoard = board.map((row) => {
-	// 			return [...row];
-	// 		});
-	// 		newBoard[i][j] = value;
-	// 		return newBoard;
-	// 	});
-	// };
+	const onDrop = (event: any) => {
+		const id = event.dataTransfer.getData("text");
+		const draggableElement = document.getElementById(id);
+		const dropzone = event.target;
 
-	const attemptMove = (x: number, y: number, newX: number, newY: number) => {
-		console.log(x, y, newX, newY);
-		board.forEach((item) => {
-			console.log(item);
-		});
-		console.log("*************************");
-		return false;
+		const dropzoneIsDroppable =
+			dropzone.className.includes("square") &&
+			dropzone.childElementCount === 0 &&
+			draggableElement !== null;
+
+		const x1 = draggableElement!.parentElement!.dataset.x;
+		const y1 = draggableElement!.parentElement!.dataset.y;
+		const x2 = dropzone.dataset.x;
+		const y2 = dropzone.dataset.y;
+
+		const isMoveValid = highlightedSquares.has(`${x2}-${y2}`);
+
+		if (dropzoneIsDroppable && isMoveValid) {
+			dropzone.appendChild(draggableElement);
+
+			setBoard((board) => {
+				return board.map((row, i) => {
+					return row.map((item, j) => {
+						if (i.toString() === x1 && j.toString() === y1) {
+							return 0;
+						} else if (i.toString() === x2 && j.toString() === y2) {
+							return 1;
+						}
+						return item;
+					});
+				});
+			});
+		}
+
+		event.dataTransfer.clearData();
+	};
+	const onDragOver = (event: any) => {
+		event.preventDefault();
+	};
+	const onDragStart = (event: any) => {
+		event.dataTransfer.setData("text/plain", event.target.id);
+	};
+	const onMouseEnterPiece = (event: any) => {
+		const x = event.target.parentElement.dataset.x;
+		const y = event.target.parentElement.dataset.y;
+		const validSquares = getValidSquares(
+			board,
+			parseFloat(x),
+			parseFloat(y)
+		);
+		setHighlightedSquares(validSquares);
+	};
+	const onMouseLeavePiece = (event: any) => {
+		setHighlightedSquares(new Set());
 	};
 
 	return (
-		<BoardContext.Provider value={{ board: board, setBoard: setBoard }}>
-			<div>
-				<div className="game-board" id="board">
-					{board.map((row, i) => {
-						return (
-							<div key={i} className="board-row">
-								{row.map((item, j) => {
-									return (
-										<Square
-											attemptMove={attemptMove}
-											x={i}
-											y={j}
-											key={j}
-											squareType={
-												(i + j) % 2 !== 0
-													? SquareType.Dark
-													: SquareType.Light
-											}
+		<div>
+			<div className="game-board" id="board">
+				{board.map((row, i) => {
+					return (
+						<div key={i} className="board-row">
+							{row.map((item, j) => {
+								return (
+									<Square
+										x={i}
+										y={j}
+										key={j}
+										id={`sq-${i}-${j}`}
+										onDragOver={onDragOver}
+										onDrop={onDrop}
+										highlight={highlightedSquares.has(
+											`${i}-${j}`
+										)}
+									>
+										<Piece
 											pieceType={item}
+											id={`pc-${i}-${j}`}
+											onDragStart={onDragStart}
+											onMouseEnter={onMouseEnterPiece}
+											onMouseLeave={onMouseLeavePiece}
 										/>
-									);
-								})}
-							</div>
-						);
-					})}
-				</div>
+									</Square>
+								);
+							})}
+						</div>
+					);
+				})}
 			</div>
-		</BoardContext.Provider>
+		</div>
 	);
 };
 

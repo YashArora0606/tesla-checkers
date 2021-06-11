@@ -1,59 +1,40 @@
-import React from "react";
-import Piece, { PieceType } from "./Piece";
+import React, { ReactNode } from "react";
 import "./Square.scss";
 
-export enum SquareType {
-	Light,
-	Dark,
-}
-
 type SquareProps = {
-	squareType: SquareType;
-	pieceType: PieceType;
 	x: number;
 	y: number;
-	attemptMove: (x: number, y: number, newX: number, newY: number) => boolean;
+	children: ReactNode;
+	onDrop: (e: any) => void;
+	onDragOver: (e: any) => void;
+	id: string;
+	highlight: boolean;
 };
 
-const Square = ({ x, y, squareType, pieceType, attemptMove }: SquareProps) => {
-	const onDragOver = (event: any) => {
-		event.preventDefault();
-	};
-
-	const onDrop = (event: any) => {
-		const id = event.dataTransfer.getData("text");
-		const draggableElement = document.getElementById(id);
-		const dropzone = event.target;
-
-		const dropzoneIsDroppable =
-			dropzone.className.includes("square") &&
-			dropzone.childElementCount === 0 &&
-			draggableElement !== null;
-
-		if (dropzoneIsDroppable) {
-			// const moveIsValid = attemptMove(x, y, xDestination, yDestination);
-
-			const moveIsValid = true;
-			moveIsValid && dropzone.appendChild(draggableElement);
-		}
-
-		event.dataTransfer.clearData();
-	};
-
+const Square = ({
+	x,
+	y,
+	children,
+	onDrop,
+	onDragOver,
+	id,
+	highlight,
+}: SquareProps) => {
 	return (
 		<div
-			id={`sq-${x}-${y}`}
+			id={id}
+			data-x={x}
+			data-y={y}
 			className={
 				"square " +
-				(squareType === SquareType.Dark
-					? "dark-square"
-					: "light-square")
+				((x + y) % 2 !== 0 ? "dark-square" : "light-square") +
+				(highlight ? " highlighted" : "")
 			}
 			onDragOver={onDragOver}
 			onDrop={onDrop}
 			draggable={false}
 		>
-			<Piece pieceType={pieceType} id={`pc-${x}-${y}`} />
+			{children}
 		</div>
 	);
 };

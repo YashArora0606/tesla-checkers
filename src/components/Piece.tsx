@@ -1,5 +1,4 @@
-import React, { useContext } from "react";
-import { BoardContext } from "./Board";
+import React from "react";
 import "./Piece.scss";
 
 export enum PieceType {
@@ -11,28 +10,18 @@ export enum PieceType {
 type PieceProps = {
 	pieceType: PieceType;
 	id: string;
+	onDragStart: (e: any) => void;
+	onMouseEnter: (e?: any) => void;
+	onMouseLeave: (e?: any) => void;
 };
 
-const Piece = ({ pieceType, id }: PieceProps) => {
-	const { board, setBoard } = useContext(BoardContext);
-
-	const onDragStart = (event: any) => {
-		event.dataTransfer.setData("text/plain", event.target.id);
-		pieceType !== PieceType.Red && event.preventDefault();
-		highlightValidMoves();
-	};
-
-	const highlightValidMoves = () => {
-		console.log("CALLING_______________________");
-		const newBoard = board.map((list) => {
-			const row = list.map((item) => {
-				return 1;
-			});
-			return row;
-		});
-		setBoard(newBoard);
-	};
-
+const Piece = ({
+	pieceType,
+	id,
+	onDragStart,
+	onMouseEnter,
+	onMouseLeave,
+}: PieceProps) => {
 	return pieceType !== PieceType.Empty ? (
 		<span
 			id={id}
@@ -43,6 +32,8 @@ const Piece = ({ pieceType, id }: PieceProps) => {
 			}
 			draggable={pieceType === PieceType.Red}
 			onDragStart={onDragStart}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 		/>
 	) : null;
 };
