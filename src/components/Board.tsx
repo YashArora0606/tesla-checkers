@@ -8,7 +8,7 @@ type BoardProps = {
 	onDragOver: (e: any) => void;
 	onDrop: (e: any) => void;
 	onDragStart: (e: any) => void;
-	onMouseEnterPiece: (e: any) => void;
+	onMouseOverPiece: (e: any) => void;
 	onMouseLeavePiece: (e: any) => void;
 	possibleMoves: Move[];
 };
@@ -18,7 +18,7 @@ const Board = ({
 	onDragOver,
 	onDrop,
 	onDragStart,
-	onMouseEnterPiece,
+	onMouseOverPiece,
 	onMouseLeavePiece,
 	possibleMoves,
 }: BoardProps) => {
@@ -46,7 +46,7 @@ const Board = ({
 										pieceType={item}
 										id={`pc-${i}-${j}`}
 										onDragStart={onDragStart}
-										onMouseEnter={onMouseEnterPiece}
+										onMouseOver={onMouseOverPiece}
 										onMouseLeave={onMouseLeavePiece}
 									/>
 								</Square>

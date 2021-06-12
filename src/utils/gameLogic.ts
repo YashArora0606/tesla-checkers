@@ -1,9 +1,17 @@
 import { PieceType } from "../components/Piece";
 
+export type Move = {
+	start: { x: number; y: number };
+	end: { x: number; y: number };
+	captured?: { x: number; y: number };
+};
+
+// Checks if given values are in bounds of the board
 const inBounds = (board: number[][], x: number, y: number) => {
 	return x >= 0 && y >= 0 && x < board.length && y < board[0].length;
 };
 
+// Checks that pieces are of the same color, regardless of king status
 export const isType = (piece1: PieceType, piece2: PieceType) => {
 	if (piece1 === PieceType.Empty && piece2 === PieceType.Empty) {
 		return true;
@@ -23,6 +31,7 @@ export const isType = (piece1: PieceType, piece2: PieceType) => {
 	return false;
 };
 
+// Returns the opposite piece colour
 export const oppositePiece = (piece: PieceType) => {
 	if (isType(piece, PieceType.Red)) {
 		return PieceType.Blue;
@@ -32,12 +41,12 @@ export const oppositePiece = (piece: PieceType) => {
 	return piece;
 };
 
-export type Move = {
-	start: { x: number; y: number };
-	end: { x: number; y: number };
-	captured?: { x: number; y: number };
+// Returns boolean representing whether the piece is a king
+export const isKing = (piece: PieceType) => {
+	return piece === PieceType.BlueKing || piece === PieceType.RedKing;
 };
 
+// Returns list of all possilbe moves given a particular piece color
 export const getAllMoves = (board: number[][], piece: PieceType) => {
 	var allMoves: Move[] = [];
 	board.forEach((row, i) => {
@@ -55,6 +64,7 @@ export const getAllMoves = (board: number[][], piece: PieceType) => {
 	return captures.length > 0 ? captures : allMoves;
 };
 
+// Checks the given board for a winner
 export const evaluateWinner = (board: number[][], lastPlayer: PieceType) => {
 	var winner = PieceType.Empty;
 	if (board.length === 1 && board[0].length === 0) {
@@ -83,7 +93,8 @@ export const getPiecesLeft = (board: number[][], piece: PieceType) => {
 	return amount;
 };
 
-export const getValidSquares = (board: number[][], x: number, y: number) => {
+// Returns possible valid moves given piece being hovered
+export const getValidMoves = (board: number[][], x: number, y: number) => {
 	const piece = board[x][y];
 	const allMoves = getAllMoves(board, piece);
 
@@ -95,10 +106,8 @@ export const getValidSquares = (board: number[][], x: number, y: number) => {
 	return movesForPiece;
 };
 
-export const isKing = (piece: PieceType) => {
-	return piece === PieceType.BlueKing || piece === PieceType.RedKing;
-};
-
+// Returns possible valid moves for a particular piece, without taking
+// into account other pieces that may be required to capture
 export const getValidMovesByPosition = (
 	board: number[][],
 	x: number,

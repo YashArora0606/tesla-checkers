@@ -4,7 +4,7 @@ import {
 	getAllMoves,
 	getPiecesLeft,
 	getValidMovesByPosition,
-	getValidSquares,
+	getValidMoves,
 	isType,
 	Move,
 } from "../utils/gameLogic";
@@ -15,6 +15,8 @@ import { PieceType } from "./Piece";
 
 const Game = () => {
 	const BOARD_SIZE = 8;
+	const AI_MOVE_TIME = 1000;
+
 	const [board, setBoard] = useState<number[][]>([[]]);
 	const [lastPlayer, setLastPlayer] = useState<PieceType>(PieceType.Empty);
 	const [winner, setWinner] = useState<PieceType>(PieceType.Empty);
@@ -22,39 +24,48 @@ const Game = () => {
 	const [doubleJumpMoves, setDoubleJumpMoves] = useState<Move[]>([]);
 	const [startTime, setStartTime] = useState<number>(0);
 	const [movesMade, setMovesMade] = useState<number>(0);
-	const AI_MOVE_TIME = 1000;
 
+	// Initial setup of the game
 	useEffect(() => {
 		initializeGame();
 		// eslint-disable-next-line
 	}, []);
 
+	// Evaluate the board for a winner after each turn
 	useEffect(() => {
-		onTurnEnd();
-
-		// eslint-disable-next-line
-	}, [lastPlayer, doubleJumpMoves]);
-
-	const checkWinner = (boardToEvaluate: number[][]) => {
-		if (boardToEvaluate.length > 1) {
+		if (board.length > 1) {
 			const w = isType(winner, PieceType.Empty)
-				? evaluateWinner(boardToEvaluate, lastPlayer)
+				? evaluateWinner(board, lastPlayer)
 				: winner;
 			setWinner(w);
 		}
-	};
 
-	const onTurnEnd = () => {
-		checkWinner(board);
-
+		// Make AI Move if needed
 		isType(lastPlayer, PieceType.Red) &&
 			setTimeout(() => {
-				makeEnemyMove();
+				var allEnemyMoves = getAllMoves(board, PieceType.Blue);
+				allEnemyMoves.length > 0 && makeMove(allEnemyMoves[0]);
 			}, AI_MOVE_TIME);
-	};
+		// eslint-disable-next-line
+	}, [lastPlayer, doubleJumpMoves]);
 
+	// Reset all state values to initial state
 	const initializeGame = () => {
-		const initialBoard = initializeBoard();
+		var initialBoard = new Array(BOARD_SIZE)
+			.fill(PieceType.Empty)
+			.map(() => {
+				return new Array(BOARD_SIZE).fill(PieceType.Empty);
+			});
+		initialBoard.forEach((row, i) => {
+			row.forEach((square, j) => {
+				(i + j) % 2 !== 0 &&
+					i <= 2 &&
+					(initialBoard[i][j] = PieceType.Blue);
+				(i + j) % 2 !== 0 &&
+					i >= 5 &&
+					(initialBoard[i][j] = PieceType.Red);
+			});
+		});
 		setBoard(initialBoard);
 		setLastPlayer(PieceType.Empty);
 		setWinner(PieceType.Empty);
@@ -62,34 +73,7 @@ const Game = () => {
 		setMovesMade(0);
 	};
 
-	const makeEnemyMove = () => {
-		var allEnemyMoves = getAllMoves(board, PieceType.Blue);
-		allEnemyMoves.length > 0 && makeMove(allEnemyMoves[0]);
-	};
-
-	const initializeBoard = () => {
-		var arr = new Array(BOARD_SIZE).fill(PieceType.Empty).map(() => {
-			return new Array(BOARD_SIZE).fill(PieceType.Empty);
-		});
-		arr.forEach((row, i) => {
-			row.forEach((square, j) => {
-				(i + j) % 2 !== 0 && i <= 2 && (arr[i][j] = PieceType.Blue);
-				(i + j) % 2 !== 0 && i >= 5 && (arr[i][j] = PieceType.Red);
-			});
-		});
-
-		// Jumping case
-		// arr[1][4] = PieceType.Blue;
-		// arr[3][4] = PieceType.Red;
-		// arr[4][5] = PieceType.Red;
-		// arr[6][5] = PieceType.Red;
-
-		// arr[1][6] = 3;
-		// arr[2][3] = 4;
-
-		return arr;
-	};
-
+	// Process the move once the user drops the piece onto a square
 	const onDrop = async (event: any) => {
 		const id = event.dataTransfer.getData("text");
 		const draggableElement = document.getElementById(id);
@@ -122,6 +106,8 @@ const Game = () => {
 
 		event.dataTransfer.clearData();
 	};
+
+	// Update state values based on given move
 	const makeMove = (moveBeingMade: Move) => {
 		const start = moveBeingMade.start;
 		const end = moveBeingMade.end;
@@ -151,7 +137,6 @@ const Game = () => {
 			].map((item) => {
 				return isType(item, PieceType.Blue) ? PieceType.BlueKing : item;
 			});
-
 			const doubleJumps = getValidMovesByPosition(
 				updatedBoard,
 				end.x,
@@ -159,6 +144,7 @@ const Game = () => {
 			).filter((move) => {
 				return move.captured !== undefined;
 			});
+
 			const canCaptureAgain = cap && doubleJumps.length !== 0;
 
 			if (canCaptureAgain) {
@@ -174,13 +160,19 @@ const Game = () => {
 			return numMovesMade + 1;
 		});
 	};
+
+	// Event will be handled explicitly on drop rather than dragover
 	const onDragOver = (event: any) => {
 		event.preventDefault();
 	};
+
+	// Express that the selected element is being dragged
 	const onDragStart = (event: any) => {
 		event.dataTransfer.setData("text/plain", event.target.id);
 	};
-	const onMouseEnterPiece = (event: any) => {
+
+	// Highlight squares on mouse over
+	const onMouseOverPiece = (event: any) => {
 		var parent = event.target.parentElement;
 		if (parent.tagName.toLowerCase() === "span") {
 			parent = parent.parentElement;
@@ -189,7 +181,7 @@ const Game = () => {
 		const x = parseFloat(parent.dataset.x);
 		const y = parseFloat(parent.dataset.y);
 
-		const validSquares = getValidSquares(board, x, y);
+		const validSquares = getValidMoves(board, x, y);
 
 		const onRedPiece =
 			isType(board[x][y], PieceType.Red) &&
@@ -206,6 +198,8 @@ const Game = () => {
 			setPossibleMoves(doubleJumpMoves);
 		}
 	};
+
+	// Stop highlighting squares when mouse leaves piece
 	const onMouseLeavePiece = (event: any) => {
 		setPossibleMoves([]);
 	};
@@ -217,7 +211,7 @@ const Game = () => {
 				onDragOver={onDragOver}
 				onDrop={onDrop}
 				onDragStart={onDragStart}
-				onMouseEnterPiece={onMouseEnterPiece}
+				onMouseOverPiece={onMouseOverPiece}
 				onMouseLeavePiece={onMouseLeavePiece}
 				possibleMoves={possibleMoves}
 			/>

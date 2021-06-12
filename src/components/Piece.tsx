@@ -14,7 +14,7 @@ type PieceProps = {
 	pieceType: PieceType;
 	id: string;
 	onDragStart: (e: any) => void;
-	onMouseEnter: (e?: any) => void;
+	onMouseOver: (e?: any) => void;
 	onMouseLeave: (e?: any) => void;
 };
 
@@ -22,7 +22,7 @@ const Piece = ({
 	pieceType,
 	id,
 	onDragStart,
-	onMouseEnter,
+	onMouseOver,
 	onMouseLeave,
 }: PieceProps) => {
 	return !isType(pieceType, PieceType.Empty) ? (
@@ -33,7 +33,7 @@ const Piece = ({
 			}`}
 			draggable={isType(pieceType, PieceType.Red)}
 			onDragStart={onDragStart}
-			onMouseEnter={onMouseEnter}
+			onMouseOver={onMouseOver}
 			onMouseLeave={onMouseLeave}
 		>
 			<span
