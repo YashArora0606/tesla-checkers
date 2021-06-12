@@ -23,6 +23,7 @@ const Game = () => {
 	const [movesMade, setMovesMade] = useState<number>(0);
 	const AI_MOVE_TIME = 1000;
 
+	//
 	useEffect(() => {
 		initializeGame();
 		// eslint-disable-next-line
@@ -33,24 +34,34 @@ const Game = () => {
 	}, [winner]);
 
 	useEffect(() => {
-		setWinner((currentWinner) => {
-			return currentWinner === PieceType.Empty
-				? evaluateWinner(board, lastPlayer)
-				: currentWinner;
-		});
+		onTurnEnd();
+
+		// eslint-disable-next-line
+	}, [lastPlayer, doubleJumpMoves]);
+
+	const checkWinner = (boardToEvaluate: number[][]) => {
+		if (boardToEvaluate.length > 1) {
+			const w =
+				winner === PieceType.Empty
+					? evaluateWinner(boardToEvaluate, lastPlayer)
+					: winner;
+			setWinner(w);
+		}
+	};
+
+	const onTurnEnd = () => {
+		checkWinner(board);
 
 		lastPlayer === PieceType.Red &&
 			setTimeout(() => {
 				makeEnemyMove();
 			}, AI_MOVE_TIME);
-		// eslint-disable-next-line
-	}, [lastPlayer, doubleJumpMoves]);
+	};
 
 	const initializeGame = () => {
 		const initialBoard = initializeBoard();
-		// TODO: load from localstorage if exists
-
 		setBoard(initialBoard);
+
 		setLastPlayer(PieceType.Empty);
 		setWinner(PieceType.Empty);
 		setStartTime(performance.now());
@@ -147,12 +158,14 @@ const Game = () => {
 				setDoubleJumpMoves(doubleJumps);
 			} else {
 				setLastPlayer(initialValue);
+
 				setDoubleJumpMoves([]);
 			}
-			// TODO: Save to localstorage
 			return updatedBoard;
 		});
-		setMovesMade((numMovesMade) => numMovesMade + 1);
+		setMovesMade((numMovesMade) => {
+			return numMovesMade + 1;
+		});
 	};
 	const onDragOver = (event: any) => {
 		event.preventDefault();

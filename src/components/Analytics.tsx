@@ -28,15 +28,13 @@ const Analytics = ({
 	useEffect(() => {
 		const interval = setInterval(() => {
 			var endTime = performance.now();
-			var timeDiff = endTime - startTime; //in ms
-			// strip the ms
+			var timeDiff = endTime - startTime;
 			timeDiff /= 1000;
-			// get seconds
 			var seconds = Math.round(timeDiff);
 			setTimeElapsed(seconds);
 		}, MINUTE_MS);
 
-		return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+		return () => clearInterval(interval);
 	}, [startTime]);
 
 	const formatTime = (seconds: number) => {
@@ -92,12 +90,10 @@ const Analytics = ({
 					</p>
 				</div>
 			)}
+
 			<button className="reset-button" onClick={resetGame}>
 				<b>Reset Game</b>
 			</button>
-			{/* <button className="reset-button" onClick={resetGame}>
-				<b>Reset Game</b>
-			</button> */}
 		</div>
 	);
 };

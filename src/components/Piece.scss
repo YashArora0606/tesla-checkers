@@ -13,6 +13,7 @@
 	text-align: center;
 
 	.emoji {
+		pointer-events: none;
 		display: inline-block;
 		position: absolute;
 		font-size: 2rem;
