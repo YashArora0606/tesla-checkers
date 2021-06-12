@@ -1,46 +1,26 @@
-# Getting Started with Create React App
+# Welcome to CheckerBot!
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Deployed Application
+https://checkerbot.netlify.app/
 
-## Available Scripts
+## Basic Features
+- Simple game mechanics, including taking turns, basic moves, and jumping over the enemy checkers to capture them.
+- Drag and drop functionality to move checkers to valid squares.
+- Highlighting of valid moves on mouse over a checker.
+- Move restriction so that if a piece can be captured, the only valid moves are captures.
+- Simple AI, finding the first valid move by following the same rules as the human player.
+- DOM/CSS board rendering (no images or canvas.
+- Stability across Chrome, Safari, Internet Explorer 11, Edge, and Opera.
 
-In the project directory, you can run:
+## Additional Features
+- Complex game mechanics, such as ensuring that if another checker can be captured by a piece which has just previously captured a checker, that this piece (and this piece alone) can make an additional move. This is referred to as double-jumping or multi-jumping.
+- Game analytics UI, allowing the user to reset the game, or see moves made, time elapsed, current turn, remaining pieces, and the winner.
+- King checkers functionality, allowing pieces to move/capture both backwards and forwards if once they have reached opposite side of the board. These can be distinguished from ordinary checkers in the game as they have a white glow around them.
 
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## The Rules of Checkers
+- The game begins with pieces arranged as seen in the initial state of the board.
+- Pieces can be moved diagonally by one space towards the opposite side of the board.
+- A checker can "capture" another checker if it is arranged so that it can jump over the piece, continuing in the same diagonal movement pattern. This means that the square the checker will "jump" to must be within the bounds of the board and unoccupied.
+- If you have the ability to capture an enemy piece, you must do.
+- If a checker captures a piece and can immediately capture again (with the same checker), it must do so (see "Complex game mechanics" under Additional Features).
+- Once a checker reaches the opposite end of the board, it becomes a King. Checkers which are Kings can move and capture both diagonally forwards and backwards.
