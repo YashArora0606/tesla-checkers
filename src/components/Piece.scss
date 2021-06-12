@@ -47,7 +47,12 @@
 .blue-piece {
 	background-color: #42a2c9;
 	border: 0.3rem solid #7cd4f7;
+
 	.emoji {
 		filter: hue-rotate(180deg);
 	}
+}
+
+.king {
+	box-shadow: 0px 0px 8px 0px white;
 }

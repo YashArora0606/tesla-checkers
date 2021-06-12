@@ -5,6 +5,7 @@ import {
 	getPiecesLeft,
 	getValidMovesByPosition,
 	getValidSquares,
+	isType,
 	Move,
 } from "../utils/gameLogic";
 import Analytics from "./Analytics";
@@ -23,15 +24,10 @@ const Game = () => {
 	const [movesMade, setMovesMade] = useState<number>(0);
 	const AI_MOVE_TIME = 1000;
 
-	//
 	useEffect(() => {
 		initializeGame();
 		// eslint-disable-next-line
 	}, []);
-
-	useEffect(() => {
-		winner !== PieceType.Empty && console.log("WINNER FOUND", winner);
-	}, [winner]);
 
 	useEffect(() => {
 		onTurnEnd();
@@ -41,10 +37,9 @@ const Game = () => {
 
 	const checkWinner = (boardToEvaluate: number[][]) => {
 		if (boardToEvaluate.length > 1) {
-			const w =
-				winner === PieceType.Empty
-					? evaluateWinner(boardToEvaluate, lastPlayer)
-					: winner;
+			const w = isType(winner, PieceType.Empty)
+				? evaluateWinner(boardToEvaluate, lastPlayer)
+				: winner;
 			setWinner(w);
 		}
 	};
@@ -52,7 +47,7 @@ const Game = () => {
 	const onTurnEnd = () => {
 		checkWinner(board);
 
-		lastPlayer === PieceType.Red &&
+		isType(lastPlayer, PieceType.Red) &&
 			setTimeout(() => {
 				makeEnemyMove();
 			}, AI_MOVE_TIME);
@@ -61,7 +56,6 @@ const Game = () => {
 	const initializeGame = () => {
 		const initialBoard = initializeBoard();
 		setBoard(initialBoard);
-
 		setLastPlayer(PieceType.Empty);
 		setWinner(PieceType.Empty);
 		setStartTime(performance.now());
@@ -83,11 +77,15 @@ const Game = () => {
 				(i + j) % 2 !== 0 && i >= 5 && (arr[i][j] = PieceType.Red);
 			});
 		});
-		// arr[1][4] = PieceType.Blue;
 
+		// Jumping case
+		// arr[1][4] = PieceType.Blue;
 		// arr[3][4] = PieceType.Red;
 		// arr[4][5] = PieceType.Red;
 		// arr[6][5] = PieceType.Red;
+
+		// arr[1][6] = 3;
+		// arr[2][3] = 4;
 
 		return arr;
 	};
@@ -145,6 +143,15 @@ const Game = () => {
 					return item;
 				});
 			});
+			updatedBoard[0] = updatedBoard[0].map((item) => {
+				return isType(item, PieceType.Red) ? PieceType.RedKing : item;
+			});
+			updatedBoard[updatedBoard.length - 1] = updatedBoard[
+				updatedBoard.length - 1
+			].map((item) => {
+				return isType(item, PieceType.Blue) ? PieceType.BlueKing : item;
+			});
+
 			const doubleJumps = getValidMovesByPosition(
 				updatedBoard,
 				end.x,
@@ -185,7 +192,8 @@ const Game = () => {
 		const validSquares = getValidSquares(board, x, y);
 
 		const onRedPiece =
-			board[x][y] === PieceType.Red && lastPlayer !== PieceType.Red;
+			isType(board[x][y], PieceType.Red) &&
+			!isType(lastPlayer, PieceType.Red);
 
 		if (onRedPiece && doubleJumpMoves.length === 0) {
 			setPossibleMoves(validSquares);

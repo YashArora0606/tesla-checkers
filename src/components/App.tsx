@@ -7,12 +7,28 @@ function App() {
 		<div className="App">
 			<div className="mid-section">
 				<div className="heading">
-					<h1>Welcome to CheckerBot!</h1>
+					<h1>Welcome to CheckerBot™</h1>
 					<p className="subtitle">
 						<b>
-							Click and drag
-							<span className="red"> your pieces</span> to defeat
-							the <span className="blue">enemy</span>!
+							Help the
+							<span className="red"> renewable energy orbs </span>
+							defeat the
+							<span className="blue"> oil and gas industry</span>!
+						</b>
+					</p>
+					<p>
+						<b>
+							Code, features, and the full list of rules are
+							available{" "}
+							<a
+								className="red"
+								target="_blank"
+								rel="noreferrer"
+								href="https://github.com/YashArora0606/tesla-checkers"
+							>
+								here
+							</a>
+							.
 						</b>
 					</p>
 				</div>

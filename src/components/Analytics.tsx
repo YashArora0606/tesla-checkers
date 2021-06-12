@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { isType } from "../utils/gameLogic";
 import "./Analytics.scss";
 import { PieceType } from "./Piece";
 
@@ -55,7 +56,7 @@ const Analytics = ({
 
 	return (
 		<div className="analytics">
-			{winner === PieceType.Empty ? (
+			{isType(winner, PieceType.Empty) ? (
 				<div>
 					<p>
 						<b>
@@ -64,7 +65,7 @@ const Analytics = ({
 					</p>
 					<p>
 						<b>
-							{lastPlayer === PieceType.Red ? (
+							{isType(lastPlayer, PieceType.Red) ? (
 								<b className="blue">
 									{"The AI is thinking..."}
 								</b>
@@ -82,7 +83,7 @@ const Analytics = ({
 			) : (
 				<div>
 					<p>
-						{winner === PieceType.Red ? (
+						{isType(winner, PieceType.Red) ? (
 							<b className="red">Congrats, you won!</b>
 						) : (
 							<b className="blue">Aw, you lost!</b>

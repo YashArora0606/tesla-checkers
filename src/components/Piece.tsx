@@ -1,10 +1,13 @@
 import React from "react";
+import { isKing, isType } from "../utils/gameLogic";
 import "./Piece.scss";
 
 export enum PieceType {
 	Empty,
 	Red,
 	Blue,
+	RedKing,
+	BlueKing,
 }
 
 type PieceProps = {
@@ -22,15 +25,13 @@ const Piece = ({
 	onMouseEnter,
 	onMouseLeave,
 }: PieceProps) => {
-	return pieceType !== PieceType.Empty ? (
+	return !isType(pieceType, PieceType.Empty) ? (
 		<span
 			id={id}
-			className={
-				pieceType === PieceType.Red
-					? "piece red-piece"
-					: "piece blue-piece"
-			}
-			draggable={pieceType === PieceType.Red}
+			className={`piece ${isKing(pieceType) ? "king" : ""} ${
+				isType(pieceType, PieceType.Red) ? "red-piece" : "blue-piece"
+			}`}
+			draggable={isType(pieceType, PieceType.Red)}
 			onDragStart={onDragStart}
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
@@ -38,13 +39,12 @@ const Piece = ({
 			<span
 				className="emoji"
 				draggable={false}
-				// tabIndex={-1}
 				onDragStart={(e: any) => {
 					e.preventDefault();
 					e.stopPropagation();
 				}}
 			>
-				{pieceType === PieceType.Red ? "⚡" : "⛽"}
+				{isType(pieceType, PieceType.Red) ? "⚡" : "⛽"}
 			</span>
 		</span>
 	) : null;
