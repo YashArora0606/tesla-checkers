@@ -50,6 +50,16 @@ export const evaluateWinner = (board: number[][], lastPlayer: PieceType) => {
 	return winner;
 };
 
+export const getPiecesLeft = (board: number[][], piece: PieceType) => {
+	var amount = 0;
+	board.forEach((row) => {
+		row.forEach((item) => {
+			item === piece && amount++;
+		});
+	});
+	return amount;
+};
+
 export const getValidSquares = (board: number[][], x: number, y: number) => {
 	const piece = board[x][y];
 	const allMoves = getAllMoves(board, piece);

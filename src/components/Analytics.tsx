@@ -7,6 +7,9 @@ type AnalyticsProps = {
 	movesMade: number;
 	lastPlayer: PieceType;
 	winner: PieceType;
+	redPiecesLeft: PieceType;
+	bluePiecesLeft: PieceType;
+	resetGame: () => void;
 };
 
 const Analytics = ({
@@ -14,6 +17,9 @@ const Analytics = ({
 	movesMade,
 	lastPlayer,
 	winner,
+	redPiecesLeft,
+	bluePiecesLeft,
+	resetGame,
 }: AnalyticsProps) => {
 	const MINUTE_MS = 1000;
 
@@ -51,10 +57,47 @@ const Analytics = ({
 
 	return (
 		<div className="analytics">
-			<p>Time Elapsed: {formatTime(timeElapsed)}</p>
-			<p>Turn: {lastPlayer !== PieceType.Red ? "Player" : "AI"}</p>
-			<p>Winner: {winner}</p>
-			<p>Moves Made: {movesMade}</p>
+			{winner === PieceType.Empty ? (
+				<div>
+					<p>
+						<b>
+							Move #{movesMade + 1} - {formatTime(timeElapsed)}
+						</b>
+					</p>
+					<p>
+						<b>
+							{lastPlayer === PieceType.Red ? (
+								<b className="blue">
+									{"The AI is thinking..."}
+								</b>
+							) : (
+								<b className="red">{`It's your turn!`}</b>
+							)}
+						</b>
+					</p>
+					<p>
+						<b className="red">{`${redPiecesLeft} Pieces`}</b>
+						<b> : </b>
+						<b className="blue">{`${bluePiecesLeft} Pieces`}</b>
+					</p>
+				</div>
+			) : (
+				<div>
+					<p>
+						{winner === PieceType.Red ? (
+							<b className="red">Congrats, you won!</b>
+						) : (
+							<b className="blue">Aw, you lost!</b>
+						)}
+					</p>
+				</div>
+			)}
+			<button className="reset-button" onClick={resetGame}>
+				<b>Reset Game</b>
+			</button>
+			{/* <button className="reset-button" onClick={resetGame}>
+				<b>Reset Game</b>
+			</button> */}
 		</div>
 	);
 };

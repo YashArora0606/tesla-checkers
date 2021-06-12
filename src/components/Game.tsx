@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
 	evaluateWinner,
 	getAllMoves,
+	getPiecesLeft,
 	getValidMovesByPosition,
 	getValidSquares,
 	Move,
@@ -19,12 +20,12 @@ const Game = () => {
 	const [possibleMoves, setPossibleMoves] = useState<Move[]>([]);
 	const [doubleJumpMoves, setDoubleJumpMoves] = useState<Move[]>([]);
 	const [startTime, setStartTime] = useState<number>(0);
+	const [movesMade, setMovesMade] = useState<number>(0);
 	const AI_MOVE_TIME = 1000;
 
 	useEffect(() => {
-		const initialBoard = initializeBoard();
-		setBoard(initialBoard);
-		setStartTime(performance.now());
+		initializeGame();
+		// eslint-disable-next-line
 	}, []);
 
 	useEffect(() => {
@@ -44,6 +45,17 @@ const Game = () => {
 			}, AI_MOVE_TIME);
 		// eslint-disable-next-line
 	}, [lastPlayer, doubleJumpMoves]);
+
+	const initializeGame = () => {
+		const initialBoard = initializeBoard();
+		// TODO: load from localstorage if exists
+
+		setBoard(initialBoard);
+		setLastPlayer(PieceType.Empty);
+		setWinner(PieceType.Empty);
+		setStartTime(performance.now());
+		setMovesMade(0);
+	};
 
 	const makeEnemyMove = () => {
 		var allEnemyMoves = getAllMoves(board, PieceType.Blue);
@@ -137,8 +149,10 @@ const Game = () => {
 				setLastPlayer(initialValue);
 				setDoubleJumpMoves([]);
 			}
+			// TODO: Save to localstorage
 			return updatedBoard;
 		});
+		setMovesMade((numMovesMade) => numMovesMade + 1);
 	};
 	const onDragOver = (event: any) => {
 		event.preventDefault();
@@ -188,9 +202,12 @@ const Game = () => {
 			/>
 			<Analytics
 				startTime={startTime}
-				movesMade={1}
+				movesMade={movesMade}
 				winner={winner}
 				lastPlayer={lastPlayer}
+				redPiecesLeft={getPiecesLeft(board, PieceType.Red)}
+				bluePiecesLeft={getPiecesLeft(board, PieceType.Blue)}
+				resetGame={initializeGame}
 			/>
 		</div>
 	);
