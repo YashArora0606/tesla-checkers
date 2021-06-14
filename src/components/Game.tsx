@@ -66,10 +66,32 @@ const Game = () => {
 					(initialBoard[i][j] = PieceType.Red);
 			});
 		});
+
+		// Enemy multijumpings
+		// initialBoard[1][4] = PieceType.Blue;
+		// initialBoard[3][4] = PieceType.Red;
+		// initialBoard[4][5] = PieceType.Red;
+		// initialBoard[6][5] = PieceType.Red;
+
+		// Player multijump must be with same piece
+		// initialBoard[1][4] = PieceType.Blue;
+		// initialBoard[5][4] = PieceType.Blue;
+		// initialBoard[3][4] = PieceType.Blue;
+		// initialBoard[4][5] = PieceType.Red;
+		// initialBoard[6][5] = PieceType.Red;
+
+		// Multijump with king's checker
+		// initialBoard[1][4] = PieceType.Blue;
+		// initialBoard[1][6] = PieceType.Blue;
+		// initialBoard[3][4] = PieceType.Blue;
+		// initialBoard[4][5] = PieceType.Red;
+
 		setBoard(initialBoard);
 		setLastPlayer(PieceType.Empty);
 		setWinner(PieceType.Empty);
 		setStartTime(performance.now());
+		setPossibleMoves([]);
+		setDoubleJumpMoves([]);
 		setMovesMade(0);
 	};
 
